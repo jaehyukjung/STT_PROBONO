@@ -1,17 +1,6 @@
 import requests
 import json
 
-
-# kakao_speech_url = "https://kakaoi-newtone-openapi.kakao.com/v1/recognize"
-#
-# rest_api_key = '14eb9391acd95f167100f637cd776d71'
-#
-# headers = {
-#     "Content-Type": "application/octet-stream",
-#     "X-DSS-Service": "DICTATION",
-#     "Authorization": "KakaoAK " + rest_api_key,
-# }
-# 함수 정의부
 def kakao_stt(app_key, stype, data):
     if stype == 'file':
         filename = data
@@ -33,11 +22,7 @@ def kakao_stt(app_key, stype, data):
     if res.status_code != 200:
         text = ""
         print("error! because ", res.json())
-    else:  # 성공했다면,
-        # print("음성인식 결과 : ", res.text)
-        # print("시작위치 : ", res.text.index('{"type":"finalResult"'))
-        # print("종료위치 : ", res.text.rindex('}')+1)
-        # print("추출한 정보 : ", res.text[res.text.index('{"type":"finalResult"'):res.text.rindex('}')+1])
+    else:
         result = res.text[res.text.index('{"type":"finalResult"'):res.text.rindex('}') + 1]
         text = json.loads(result).get('value')
 
@@ -53,8 +38,6 @@ print(text)
 
 import speech_recognition as sr
 
-
-# 함수 정의부
 def get_speech():
     # 마이크에서 음성을 추출하는 객체
     recognizer = sr.Recognizer()
@@ -75,9 +58,21 @@ def get_speech():
 
     return audio
 
-
-# 함수 호출부
 audio = get_speech()
-text = kakao_stt('14eb9391acd95f167100f637cd776d71', "stream", audio)
+text = kakao_stt(KAKAO_APP_KEY, "stream", audio)
 print("음성 인식 결과 : " + text)
 
+arr = text.split()
+
+print(arr)
+
+ans_dic = {'아메리카노': 0, '라떼' : 0}
+
+for coffee in arr:
+    for ans in ans_dic:
+        if coffee == ans:
+            ans_dic[ans] +=1
+
+for ans in ans_dic:
+    if ans_dic[ans] != 0:
+        print(f"{ans} 주문")
